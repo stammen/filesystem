@@ -23,6 +23,7 @@
 #ifdef BOOST_WINDOWS_API
 
 #include "windows_file_codecvt.hpp"
+#include <boost/predef/platform.h>
 
 // Versions of MinGW prior to GCC 4.6 requires this
 #ifndef WINVER
@@ -36,7 +37,11 @@
     const char* from, const char* from_end, const char*& from_next,
     wchar_t* to, wchar_t* to_end, wchar_t*& to_next) const
   {
+#if BOOST_PLAT_WINDOWS_RUNTIME 
+	UINT codepage = 0;
+#else
     UINT codepage = AreFileApisANSI() ? CP_ACP : CP_OEMCP;
+#endif
 
     int count;
     if ((count = ::MultiByteToWideChar(codepage, MB_PRECOMPOSED, from,
@@ -56,8 +61,11 @@
     const wchar_t* from, const wchar_t* from_end, const wchar_t*  & from_next,
     char* to, char* to_end, char* & to_next) const
   {
-    UINT codepage = AreFileApisANSI() ? CP_ACP : CP_OEMCP;
-
+ #if BOOST_PLAT_WINDOWS_RUNTIME 
+	UINT codepage = 0;
+#else
+	UINT codepage = AreFileApisANSI() ? CP_ACP : CP_OEMCP;
+#endif
     int count;
     if ((count = ::WideCharToMultiByte(codepage, WC_NO_BEST_FIT_CHARS, from,
       from_end - from, to, to_end - to, 0, 0)) == 0)
