@@ -42,6 +42,10 @@
 
 #include <boost/config/abi_prefix.hpp> // must be the last #include
 
+#ifdef BOOST_WINDOWS_API
+#include <boost/predef/platform.h>
+#endif
+
 namespace boost
 {
 namespace filesystem
