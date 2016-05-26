@@ -1114,8 +1114,7 @@ namespace detail
           return;
 #     endif
 
-    error(!BOOST_CREATE_SYMBOLIC_LINK(from.c_str(), to.c_str(),
-        ) ? BOOST_ERRNO : 0,
+    error(!BOOST_CREATE_SYMBOLIC_LINK(from.c_str(), to.c_str(),0) ? BOOST_ERRNO : 0,
       to, from, ec, "boost::filesystem::create_directory_symlink");
 #   endif
 #   endif

@@ -44,9 +44,9 @@ void fail(int err, boost::system::error_code* ec)
   return;
 }
 
-#if !defined(BOOST_PLAT_WINDOWS_RUNTIME)
 #ifdef BOOST_WINDOWS_API
- 
+ #if BOOST_PLAT_WINDOWS_RUNTIME == BOOST_VERSION_NUMBER_NOT_AVAILABLE
+
 int acquire_crypt_handle(HCRYPTPROV& handle)
 {
   if (::CryptAcquireContextW(&handle, 0, 0, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | CRYPT_SILENT))
