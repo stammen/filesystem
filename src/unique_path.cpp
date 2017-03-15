@@ -45,6 +45,7 @@ void fail(int err, boost::system::error_code* ec)
 }
 
 #ifdef BOOST_WINDOWS_API
+ #if BOOST_PLAT_WINDOWS_RUNTIME == BOOST_VERSION_NUMBER_NOT_AVAILABLE
 
 int acquire_crypt_handle(HCRYPTPROV& handle)
 {
@@ -68,7 +69,7 @@ int acquire_crypt_handle(HCRYPTPROV& handle)
 
   return ::GetLastError();
 }
-
+#endif
 #endif
 
 void system_crypt_random(void* buf, std::size_t len, boost::system::error_code* ec)
@@ -101,7 +102,20 @@ void system_crypt_random(void* buf, std::size_t len, boost::system::error_code* 
   }
 
   close(file);
+#elif BOOST_PLAT_WINDOWS_RUNTIME
+	using namespace Platform;
+	using namespace Windows::Foundation;
+	using namespace Windows::Foundation::Collections;
+	using namespace Windows::Security::Cryptography;
+	using namespace Windows::Storage::Streams;
+	IBuffer ^ibuf = CryptographicBuffer::GenerateRandom(len);
+	Array<unsigned char> ^arr;
+	CryptographicBuffer::CopyToByteArray(ibuf, &arr);
+	unsigned arrayLen = arr->Length;
 
+	// Make sure not to overflow the copy
+	arrayLen = (arrayLen > len) ? len : arrayLen;
+	memcpy(buf, arr->Data, arrayLen);
 # else // BOOST_WINDOWS_API
 
   HCRYPTPROV handle;

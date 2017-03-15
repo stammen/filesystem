@@ -42,6 +42,10 @@
 
 #include <boost/config/abi_prefix.hpp> // must be the last #include
 
+#ifdef BOOST_WINDOWS_API
+#include <boost/predef/platform.h>
+#endif
+
 namespace boost
 {
 namespace filesystem
@@ -455,7 +459,10 @@ namespace filesystem
     //  Experimental generic function returning generic formatted path (i.e. separators
     //  are forward slashes). Motivation: simpler than a family of generic_*string
     //  functions.
-    path generic() const
+#if BOOST_PLAT_WINDOWS_RUNTIME 
+	#define generic GenericFromBoost
+#endif
+    path generic(void) const
     {
 #   ifdef BOOST_WINDOWS_API
       path tmp;
@@ -466,7 +473,9 @@ namespace filesystem
       return path(*this);
 #   endif
     }
-
+#if BOOST_PLAT_WINDOWS_RUNTIME 
+	#undef generic
+#endif
     template <class String>
     String generic_string() const;
 

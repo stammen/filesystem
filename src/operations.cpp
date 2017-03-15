@@ -105,7 +105,11 @@ using std::wstring;
 #   include <windows.h>
 #   include <winnt.h>
 #   if !defined(_WIN32_WINNT)
-#     define  _WIN32_WINNT   0x0500
+#		if BOOST_PLAT_WINDOWS_RUNTIME
+#     		define  _WIN32_WINNT   0x0A00
+#		else
+#     		define  _WIN32_WINNT   0x0500
+#   	endif
 #   endif
 #   if defined(__BORLANDC__) || defined(__MWERKS__)
 #     if defined(__BORLANDC__)
@@ -172,6 +176,13 @@ typedef struct _REPARSE_DATA_BUFFER {
 #   define IO_REPARSE_TAG_SYMLINK (0xA000000CL)       
 # endif
 
+#if BOOST_PLAT_WINDOWS_RUNTIME 
+inline std::wstring wgetenv(const wchar_t* name)
+{
+	// winrt platforms do not support GetEnvironmentVariableW
+	return std::wstring();
+}
+#else
 inline std::wstring wgetenv(const wchar_t* name)
 {
   // use vector since for C++03 basic_string is not required to be contiguous
@@ -182,6 +193,7 @@ inline std::wstring wgetenv(const wchar_t* name)
     || ::GetEnvironmentVariableW(name, &buf[0], static_cast<DWORD>(buf.size())) == 0)
     ? std::wstring() : std::wstring(&buf[0]);
 }
+#endif
 
 # endif  // BOOST_WINDOWS_API
 
