@@ -38,7 +38,7 @@
     wchar_t* to, wchar_t* to_end, wchar_t*& to_next) const
   {
 #if BOOST_PLAT_WINDOWS_RUNTIME 
-	UINT codepage = 0;
+	UINT codepage = CP_ACP;
 #else
     UINT codepage = AreFileApisANSI() ? CP_ACP : CP_OEMCP;
 #endif
@@ -62,7 +62,7 @@
     char* to, char* to_end, char* & to_next) const
   {
  #if BOOST_PLAT_WINDOWS_RUNTIME 
-	UINT codepage = 0;
+	UINT codepage = CP_ACP;
 #else
 	UINT codepage = AreFileApisANSI() ? CP_ACP : CP_OEMCP;
 #endif
